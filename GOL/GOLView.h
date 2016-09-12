@@ -13,7 +13,7 @@
 //
 
 #pragma once
-
+#include "Grid.h"
 
 class CGOLView : public CView
 {
@@ -24,6 +24,22 @@ protected: // create from serialization only
 // Attributes
 public:
 	CGOLDoc* GetDocument() const;
+
+	int gridSize;
+	int lineSize;
+	int cellSize;
+	int speed;
+
+	bool draw;
+
+	CRect cellRect;
+	CRect gridRect;
+
+	COLORREF cellColor;
+	COLORREF lineColor;
+	COLORREF backColor;
+
+	Grid* grid;
 
 // Operations
 public:
@@ -36,6 +52,7 @@ protected:
 
 // Implementation
 public:
+	void ResizeWindow();
 	virtual ~CGOLView();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
@@ -50,6 +67,8 @@ protected:
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnBtstart();
 };
 
 #ifndef _DEBUG  // debug version in GOLView.cpp

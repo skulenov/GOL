@@ -188,6 +188,7 @@
     <ClInclude Include="GOL.h" />
     <ClInclude Include="GOLDoc.h" />
     <ClInclude Include="GOLView.h" />
+    <ClInclude Include="Grid.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -197,6 +198,7 @@
     <ClCompile Include="GOL.cpp" />
     <ClCompile Include="GOLDoc.cpp" />
     <ClCompile Include="GOLView.cpp" />
+    <ClCompile Include="Grid.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -227,4 +229,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="GOL.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>
