@@ -37,17 +37,19 @@ BEGIN_MESSAGE_MAP(CGOLView, CView)
 	ON_WM_CONTEXTMENU()
 	ON_WM_RBUTTONUP()
 	ON_COMMAND(ID_BTSTART, &CGOLView::OnBtstart)
+	ON_COMMAND(ID_BTRND, &CGOLView::OnBtrnd)
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 // CGOLView construction/destruction
 
-CGOLView::CGOLView() : gridSize(10),draw(false),cellSize(5),lineSize(2),speed(50)
+CGOLView::CGOLView() : gridSize(50),draw(false),cellSize(10),lineSize(1),speed(200)
 {
 	// TODO: add construction code here
 	grid = new Grid(gridSize);
-	cellColor = RGB(255, 63, 31);
+	cellColor = RGB(63, 255, 31);
 	lineColor = RGB(200, 200, 200);
-	backColor = RGB(50, 80, 100);
+	backColor = RGB(100, 100, 100);
 }
 
 CGOLView::~CGOLView()
@@ -154,5 +156,24 @@ void CGOLView::OnBtstart()
 {
 	// TODO: Add your command handler code here
 	draw = true;
+	SetTimer(0,speed,NULL);
 	Invalidate();
+}
+
+
+void CGOLView::OnBtrnd()
+{
+	// TODO: Add your command handler code here
+	draw = true;
+	grid->RandomGrid();
+	Invalidate();
+}
+
+
+void CGOLView::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: Add your message handler code here and/or call default
+	grid->StepGeneration();
+	Invalidate();
+	CView::OnTimer(nIDEvent);
 }

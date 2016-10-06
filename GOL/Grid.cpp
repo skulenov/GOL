@@ -123,7 +123,7 @@ void Grid::SurviveOrDie()
 	// 1) If a cell is alive (currGen=1) and has 2 live neighbours (nextGen=2) it lives in the next generation (nextGen=1)
 	// 2) if a cell has 3 live neighbours, it will become or stay alive regardless of it's current state
 
-	std::transform(nextGen.begin(), nextGen.end(), currGen.begin(), nextGen.begin(), [](int c, int n) {return ((n == 3 || (c == 1 && n == 2)) ? 1 : 0); });
+	transform(nextGen.begin(), nextGen.end(), currGen.begin(), nextGen.begin(), [](int n, int c) {return ((n == 3 || (c == 1 && n == 2)) ? 1 : 0); });
 
 	//for (unsigned int i = 0; i < nextGen.size(); ++i)
 	//{
@@ -133,7 +133,7 @@ void Grid::SurviveOrDie()
 
 void Grid::NewWave()
 {
-	currGen.assign(nextGen.begin(), nextGen.end());
+	currGen = vector<int>(nextGen);
 	nextGen.assign(gridDim*gridDim, 0);
 	++generation;
 }
