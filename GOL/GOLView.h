@@ -80,6 +80,7 @@ private:
 public:
 	afx_msg void OnUpdateBtstart(CCmdUI *pCmdUI);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnBtclr();
 };
 
 #ifndef _DEBUG  // debug version in GOLView.cpp

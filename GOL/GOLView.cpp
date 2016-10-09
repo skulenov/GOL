@@ -41,12 +41,13 @@ BEGIN_MESSAGE_MAP(CGOLView, CView)
 	ON_WM_TIMER()
 	ON_UPDATE_COMMAND_UI(ID_BTSTART, &CGOLView::OnUpdateBtstart)
 	ON_WM_ERASEBKGND()
+	ON_COMMAND(ID_BTCLR, &CGOLView::OnBtclr)
 END_MESSAGE_MAP()
 
 // CGOLView construction/destruction
 
 CGOLView::CGOLView() : gridSize(50),
-						draw(false),
+						draw(true),
 						cellSize(10),
 						lineSize(1),
 						speed(200),
@@ -85,7 +86,7 @@ void CGOLView::OnDraw(CDC* pDC)
 		return;
 
 	// TODO: add draw code for native data here
-	if (draw)
+	if (true)
 	{
 		
 		int pDCSave = pDC->SaveDC();
@@ -178,7 +179,6 @@ CGOLDoc* CGOLView::GetDocument() const // non-debug version is inline
 
 void CGOLView::OnBtstart()
 {
-	
 	// TODO: Add your command handler code here
 	if (m_BtnStartText==stopStr)
 	{
@@ -190,14 +190,12 @@ void CGOLView::OnBtstart()
 		m_BtnStartText = stopStr;
 		SetTimer(0,speed,NULL);
 	}
-	draw = true;
 }
 
 
 void CGOLView::OnBtrnd()
 {
 	// TODO: Add your command handler code here
-	draw = true;
 	grid->RandomGrid();
 	Invalidate();
 }
@@ -225,4 +223,17 @@ BOOL CGOLView::OnEraseBkgnd(CDC* pDC)
 	// TODO: Add your message handler code here and/or call default
 
 	return true;// CView::OnEraseBkgnd(pDC);
+}
+
+
+void CGOLView::OnBtclr()
+{
+	// TODO: Add your command handler code here
+	if (m_BtnStartText == stopStr)
+	{
+		KillTimer(timer);
+		m_BtnStartText = startStr;
+	}
+	grid = new Grid(gridSize);
+	Invalidate();
 }
