@@ -79,6 +79,7 @@ private:
 	CString stopStr;
 public:
 	afx_msg void OnUpdateBtstart(CCmdUI *pCmdUI);
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 };
 
 #ifndef _DEBUG  // debug version in GOLView.cpp

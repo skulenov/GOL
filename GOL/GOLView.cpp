@@ -40,6 +40,7 @@ BEGIN_MESSAGE_MAP(CGOLView, CView)
 	ON_COMMAND(ID_BTRND, &CGOLView::OnBtrnd)
 	ON_WM_TIMER()
 	ON_UPDATE_COMMAND_UI(ID_BTSTART, &CGOLView::OnUpdateBtstart)
+	ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
 // CGOLView construction/destruction
@@ -91,20 +92,34 @@ void CGOLView::OnDraw(CDC* pDC)
 		GetClientRect(&gridRect);
 		pDC->FillSolidRect(&gridRect, backColor);
 
+		CDC dcBackBuffer;
+		dcBackBuffer.CreateCompatibleDC(pDC);
+		CBitmap bitmapBuffer;
+		bitmapBuffer.CreateCompatibleBitmap(pDC, gridRect.Width(), gridRect.Height());
+		CBitmap* oldBitBuffer = dcBackBuffer.SelectObject(&bitmapBuffer);
+
+		int xMove = (gridRect.Width() - gridSize*cellSize) / 2;
+		int yMove = (gridRect.Height() - gridSize*cellSize) / 2;
+		
+
 		CBrush brush;
 		brush.CreateStockObject(HOLLOW_BRUSH);
-		CBrush* pBrOld = pDC->SelectObject(&brush);
+		CBrush* pBrOld = dcBackBuffer.SelectObject(&brush);
 
 		COLORREF crCell;
 
 		for(int row = 0; row < gridSize; ++row)
 			for (int col = 0; col < gridSize; ++col)
 			{
-				cellRect = {col * cellSize, row * cellSize, col * cellSize + cellSize, row * cellSize + cellSize };
+				cellRect = {col * cellSize+xMove, row * cellSize+yMove, col * cellSize + cellSize+xMove, row * cellSize + cellSize + yMove};
 				crCell = (grid->CellState(col, row)) ? cellColor : backColor;
-				pDC->FillSolidRect(&cellRect, crCell);
-				pDC->Rectangle(&cellRect);
+				dcBackBuffer.FillSolidRect(&cellRect, crCell);
+				dcBackBuffer.Rectangle(&cellRect);
 			}
+		pDC->BitBlt(0, 0, gridRect.Width(), gridRect.Height(), &dcBackBuffer, 0, 0, SRCCOPY);
+		dcBackBuffer.SelectObject(oldBitBuffer);
+		dcBackBuffer.DeleteDC();
+		bitmapBuffer.DeleteObject();
 		pDC->SelectObject(pBrOld);
 		pDC->RestoreDC(pDCSave);
 		brush.DeleteObject();
@@ -202,4 +217,12 @@ void CGOLView::OnUpdateBtstart(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
 	pCmdUI->SetText(m_BtnStartText);
+}
+
+
+BOOL CGOLView::OnEraseBkgnd(CDC* pDC)
+{
+	// TODO: Add your message handler code here and/or call default
+
+	return true;// CView::OnEraseBkgnd(pDC);
 }
