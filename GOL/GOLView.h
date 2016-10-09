@@ -22,9 +22,9 @@ protected: // create from serialization only
 	DECLARE_DYNCREATE(CGOLView)
 
 // Attributes
-public:
-	CGOLDoc* GetDocument() const;
-
+private:
+	bool isRunning;
+	UINT_PTR timer;
 	int gridSize;
 	int lineSize;
 	int cellSize;
@@ -40,6 +40,8 @@ public:
 	COLORREF backColor;
 
 	Grid* grid;
+public:
+	CGOLDoc* GetDocument() const;
 
 // Operations
 public:
@@ -71,6 +73,12 @@ public:
 	afx_msg void OnBtstart();
 	afx_msg void OnBtrnd();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+private:
+	CString m_BtnStartText;
+	CString startStr;
+	CString stopStr;
+public:
+	afx_msg void OnUpdateBtstart(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in GOLView.cpp

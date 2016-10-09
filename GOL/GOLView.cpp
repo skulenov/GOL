@@ -39,17 +39,27 @@ BEGIN_MESSAGE_MAP(CGOLView, CView)
 	ON_COMMAND(ID_BTSTART, &CGOLView::OnBtstart)
 	ON_COMMAND(ID_BTRND, &CGOLView::OnBtrnd)
 	ON_WM_TIMER()
+	ON_UPDATE_COMMAND_UI(ID_BTSTART, &CGOLView::OnUpdateBtstart)
 END_MESSAGE_MAP()
 
 // CGOLView construction/destruction
 
-CGOLView::CGOLView() : gridSize(50),draw(false),cellSize(10),lineSize(1),speed(200)
+CGOLView::CGOLView() : gridSize(50),
+						draw(false),
+						cellSize(10),
+						lineSize(1),
+						speed(200),
+						isRunning(false),
+						timer(0)
 {
 	// TODO: add construction code here
 	grid = new Grid(gridSize);
 	cellColor = RGB(63, 255, 31);
 	lineColor = RGB(200, 200, 200);
 	backColor = RGB(100, 100, 100);
+	startStr.LoadStringW(IDS_BTNSTART);
+	stopStr.LoadStringW(IDS_BTNSTOP);
+	m_BtnStartText = startStr;
 }
 
 CGOLView::~CGOLView()
@@ -78,9 +88,8 @@ void CGOLView::OnDraw(CDC* pDC)
 	{
 		
 		int pDCSave = pDC->SaveDC();
-		CRect recClient;
-		GetClientRect(&recClient);
-		pDC->FillSolidRect(&recClient, backColor);
+		GetClientRect(&gridRect);
+		pDC->FillSolidRect(&gridRect, backColor);
 
 		CBrush brush;
 		brush.CreateStockObject(HOLLOW_BRUSH);
@@ -91,12 +100,12 @@ void CGOLView::OnDraw(CDC* pDC)
 		for(int row = 0; row < gridSize; ++row)
 			for (int col = 0; col < gridSize; ++col)
 			{
-				CRect recCell = {col * cellSize, row * cellSize, col * cellSize + cellSize, row * cellSize + cellSize };
+				cellRect = {col * cellSize, row * cellSize, col * cellSize + cellSize, row * cellSize + cellSize };
 				crCell = (grid->CellState(col, row)) ? cellColor : backColor;
-				pDC->FillSolidRect(&recCell, crCell);
-				pDC->Rectangle(&recCell);
+				pDC->FillSolidRect(&cellRect, crCell);
+				pDC->Rectangle(&cellRect);
 			}
-
+		pDC->SelectObject(pBrOld);
 		pDC->RestoreDC(pDCSave);
 		brush.DeleteObject();
 	}
@@ -154,10 +163,19 @@ CGOLDoc* CGOLView::GetDocument() const // non-debug version is inline
 
 void CGOLView::OnBtstart()
 {
+	
 	// TODO: Add your command handler code here
+	if (m_BtnStartText==stopStr)
+	{
+		KillTimer(timer);
+		m_BtnStartText = startStr;
+	}
+	else
+	{
+		m_BtnStartText = stopStr;
+		SetTimer(0,speed,NULL);
+	}
 	draw = true;
-	SetTimer(0,speed,NULL);
-	Invalidate();
 }
 
 
@@ -172,8 +190,16 @@ void CGOLView::OnBtrnd()
 
 void CGOLView::OnTimer(UINT_PTR nIDEvent)
 {
+	timer = nIDEvent;
 	// TODO: Add your message handler code here and/or call default
 	grid->StepGeneration();
 	Invalidate();
 	CView::OnTimer(nIDEvent);
+}
+
+
+void CGOLView::OnUpdateBtstart(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->SetText(m_BtnStartText);
 }

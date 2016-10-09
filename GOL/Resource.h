@@ -4,6 +4,9 @@
 //
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
+#define IDS_BTNSTART                    101
+#define IDS_STRING102                   102
+#define IDS_BTNSTOP                     102
 #define IDB_WRITESMALL                  110
 #define IDB_WRITELARGE                  111
 #define IDB_MAIN                        112
