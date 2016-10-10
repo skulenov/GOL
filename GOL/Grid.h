@@ -14,10 +14,10 @@ private:
 
 public:
 	void RandomGrid();
-	bool CellState(int);
-	bool CellState(int, int);
-	void AlterCell(int, int);
-	void AlterCell(int, int, int);
+	bool CellState(int index);
+	bool CellState(int i, int j);
+	void AlterCell(int index, int state);
+	void AlterCell(int i, int j, int state);
 	void StepGeneration();
 	int GetGeneration();
 

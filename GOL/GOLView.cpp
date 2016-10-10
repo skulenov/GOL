@@ -42,6 +42,7 @@ BEGIN_MESSAGE_MAP(CGOLView, CView)
 	ON_UPDATE_COMMAND_UI(ID_BTSTART, &CGOLView::OnUpdateBtstart)
 	ON_WM_ERASEBKGND()
 	ON_COMMAND(ID_BTCLR, &CGOLView::OnBtclr)
+	ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
 
 // CGOLView construction/destruction
@@ -62,6 +63,7 @@ CGOLView::CGOLView() : gridSize(50),
 	startStr.LoadStringW(IDS_BTNSTART);
 	stopStr.LoadStringW(IDS_BTNSTOP);
 	m_BtnStartText = startStr;
+	gridRect = new CRect(0, 0, 0, 0);
 }
 
 CGOLView::~CGOLView()
@@ -86,21 +88,19 @@ void CGOLView::OnDraw(CDC* pDC)
 		return;
 
 	// TODO: add draw code for native data here
-	if (true)
-	{
 		
 		int pDCSave = pDC->SaveDC();
-		GetClientRect(&gridRect);
-		pDC->FillSolidRect(&gridRect, backColor);
+		GetClientRect(&clientRect);
+		pDC->FillSolidRect(&clientRect, backColor);
 
 		CDC dcBackBuffer;
 		dcBackBuffer.CreateCompatibleDC(pDC);
 		CBitmap bitmapBuffer;
-		bitmapBuffer.CreateCompatibleBitmap(pDC, gridRect.Width(), gridRect.Height());
+		bitmapBuffer.CreateCompatibleBitmap(pDC, clientRect.Width(), clientRect.Height());
 		CBitmap* oldBitBuffer = dcBackBuffer.SelectObject(&bitmapBuffer);
 
-		int xMove = (gridRect.Width() - gridSize*cellSize) / 2;
-		int yMove = (gridRect.Height() - gridSize*cellSize) / 2;
+		int xMove = (clientRect.Width() - gridSize*cellSize) / 2;
+		int yMove = (clientRect.Height() - gridSize*cellSize) / 2;
 		
 
 		CBrush brush;
@@ -117,14 +117,20 @@ void CGOLView::OnDraw(CDC* pDC)
 				dcBackBuffer.FillSolidRect(&cellRect, crCell);
 				dcBackBuffer.Rectangle(&cellRect);
 			}
-		pDC->BitBlt(0, 0, gridRect.Width(), gridRect.Height(), &dcBackBuffer, 0, 0, SRCCOPY);
+		pDC->BitBlt(0, 0, clientRect.Width(), clientRect.Height(), &dcBackBuffer, 0, 0, SRCCOPY);
 		dcBackBuffer.SelectObject(oldBitBuffer);
 		dcBackBuffer.DeleteDC();
 		bitmapBuffer.DeleteObject();
 		pDC->SelectObject(pBrOld);
 		pDC->RestoreDC(pDCSave);
 		brush.DeleteObject();
-	}
+		// now that Grid is known...
+		if (cellRect.BottomRight() != gridRect.BottomRight())
+		{
+			CPoint lastCellPoint = CPoint(cellRect.BottomRight());
+			CPoint firstCellPoint = CPoint(lastCellPoint.x - gridSize*cellSize, lastCellPoint.y - gridSize*cellSize);
+			gridRect = new CRect(firstCellPoint, lastCellPoint);
+		}
 }
 
 void CGOLView::ResizeWindow()
@@ -229,11 +235,32 @@ BOOL CGOLView::OnEraseBkgnd(CDC* pDC)
 void CGOLView::OnBtclr()
 {
 	// TODO: Add your command handler code here
-	if (m_BtnStartText == stopStr)
+	KillTimer(timer);
+	m_BtnStartText = startStr;
+
+	grid = new Grid(gridSize);
+	Invalidate();
+}
+
+
+void CGOLView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	
+	if (gridRect.PtInRect(point))
 	{
 		KillTimer(timer);
 		m_BtnStartText = startStr;
+		int xmove = (clientRect.Width() - gridRect.Width()) / 2;
+		int ymove = (clientRect.Height() - gridRect.Height()) / 2;
+		CPoint gridPoint = CPoint(point.x - xmove, point.y - ymove);
+
+		int cellX = (int)((gridPoint.x) / cellSize);
+		int cellY = (int)((gridPoint.y) / cellSize);
+		if(grid->CellState(cellX,cellY)) grid->AlterCell(cellX, cellY, 0);
+		else grid->AlterCell(cellX,cellY,1);
+		Invalidate();
 	}
-	grid = new Grid(gridSize);
-	Invalidate();
+	// TODO: Add your message handler code here and/or call default
+
+	CView::OnLButtonDown(nFlags, point);
 }

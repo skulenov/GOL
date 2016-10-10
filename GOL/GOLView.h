@@ -23,23 +23,7 @@ protected: // create from serialization only
 
 // Attributes
 private:
-	bool isRunning;
-	UINT_PTR timer;
-	int gridSize;
-	int lineSize;
-	int cellSize;
-	int speed;
 
-	bool draw;
-
-	CRect cellRect;
-	CRect gridRect;
-
-	COLORREF cellColor;
-	COLORREF lineColor;
-	COLORREF backColor;
-
-	Grid* grid;
 public:
 	CGOLDoc* GetDocument() const;
 
@@ -81,6 +65,26 @@ public:
 	afx_msg void OnUpdateBtstart(CCmdUI *pCmdUI);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnBtclr();
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+private:
+	bool isRunning;
+	UINT_PTR timer;
+	int gridSize;
+	int lineSize;
+	int cellSize;
+	int speed;
+
+	bool draw;
+
+	CRect cellRect;
+	CRect gridRect;
+	CRect clientRect;
+
+	COLORREF cellColor;
+	COLORREF lineColor;
+	COLORREF backColor;
+
+	Grid* grid;
 };
 
 #ifndef _DEBUG  // debug version in GOLView.cpp
