@@ -28,7 +28,6 @@
 #define new DEBUG_NEW
 #endif
 
-
 // CGOLView
 
 IMPLEMENT_DYNCREATE(CGOLView, CView)
@@ -43,31 +42,36 @@ BEGIN_MESSAGE_MAP(CGOLView, CView)
 	ON_WM_ERASEBKGND()
 	ON_COMMAND(ID_BTCLR, &CGOLView::OnBtclr)
 	ON_WM_LBUTTONDOWN()
+	ON_WM_MOUSEMOVE()
+	ON_WM_CREATE()
 END_MESSAGE_MAP()
 
 // CGOLView construction/destruction
 
 CGOLView::CGOLView() : gridSize(50),
-						draw(true),
 						cellSize(10),
 						lineSize(1),
 						speed(200),
-						isRunning(false),
 						timer(0)
 {
-	// TODO: add construction code here
 	grid = new Grid(gridSize);
 	cellColor = RGB(63, 255, 31);
 	lineColor = RGB(200, 200, 200);
 	backColor = RGB(100, 100, 100);
 	startStr.LoadStringW(IDS_BTNSTART);
 	stopStr.LoadStringW(IDS_BTNSTOP);
-	m_BtnStartText = startStr;
+	m_BtnStartText.LoadStringW(IDS_BTNSTART);
 	gridRect = new CRect(0, 0, 0, 0);
+	m_arrCells.SetSize(gridSize*gridSize);
 }
 
 CGOLView::~CGOLView()
 {
+	grid->~Grid();
+
+	m_arrCells.RemoveAll();
+	m_arrCells.~CArray();
+
 }
 
 BOOL CGOLView::PreCreateWindow(CREATESTRUCT& cs)
@@ -87,62 +91,56 @@ void CGOLView::OnDraw(CDC* pDC)
 	if (!pDoc)
 		return;
 
-	// TODO: add draw code for native data here
+	// Save DC & start with double buffered drawing of the grid.
+	// When done, restore saved DC.
 		
-		int pDCSave = pDC->SaveDC();
-		GetClientRect(&clientRect);
-		pDC->FillSolidRect(&clientRect, backColor);
+	int pDCSave = pDC->SaveDC();
+	GetClientRect(&clientRect);
 
-		CDC dcBackBuffer;
-		dcBackBuffer.CreateCompatibleDC(pDC);
-		CBitmap bitmapBuffer;
-		bitmapBuffer.CreateCompatibleBitmap(pDC, clientRect.Width(), clientRect.Height());
-		CBitmap* oldBitBuffer = dcBackBuffer.SelectObject(&bitmapBuffer);
+	CDC dcBackBuffer;
+	dcBackBuffer.CreateCompatibleDC(pDC);
 
-		int xMove = (clientRect.Width() - gridSize*cellSize) / 2;
-		int yMove = (clientRect.Height() - gridSize*cellSize) / 2;
+	CBitmap bitmapBuffer;
+	bitmapBuffer.CreateCompatibleBitmap(pDC, clientRect.Width(), clientRect.Height());
+	CBitmap* oldBitBuffer = dcBackBuffer.SelectObject(&bitmapBuffer);
 		
+	CPoint oldShift = m_gridShift;
+	m_gridShift = CPoint((clientRect.Width() - gridSize*cellSize) / 2, (clientRect.Height() - gridSize*cellSize) / 2);
 
-		CBrush brush;
-		brush.CreateStockObject(HOLLOW_BRUSH);
-		CBrush* pBrOld = dcBackBuffer.SelectObject(&brush);
+	ComputeCoords();
 
-		COLORREF crCell;
+	CBrush brush;
+	brush.CreateStockObject(HOLLOW_BRUSH);
+	CBrush* pBrOld = dcBackBuffer.SelectObject(&brush);
+	COLORREF crCell;
+		
+	gridRect.SetRect(m_gridShift, m_gridShift + CPoint(gridSize*cellSize, gridSize*cellSize));
 
-		for(int row = 0; row < gridSize; ++row)
-			for (int col = 0; col < gridSize; ++col)
-			{
-				cellRect = {col * cellSize+xMove, row * cellSize+yMove, col * cellSize + cellSize+xMove, row * cellSize + cellSize + yMove};
-				crCell = (grid->CellState(col, row)) ? cellColor : backColor;
-				dcBackBuffer.FillSolidRect(&cellRect, crCell);
-				dcBackBuffer.Rectangle(&cellRect);
-			}
-		pDC->BitBlt(0, 0, clientRect.Width(), clientRect.Height(), &dcBackBuffer, 0, 0, SRCCOPY);
-		dcBackBuffer.SelectObject(oldBitBuffer);
-		dcBackBuffer.DeleteDC();
-		bitmapBuffer.DeleteObject();
-		pDC->SelectObject(pBrOld);
-		pDC->RestoreDC(pDCSave);
-		brush.DeleteObject();
-		// now that Grid is known...
-		if (cellRect.BottomRight() != gridRect.BottomRight())
-		{
-			CPoint lastCellPoint = CPoint(cellRect.BottomRight());
-			CPoint firstCellPoint = CPoint(lastCellPoint.x - gridSize*cellSize, lastCellPoint.y - gridSize*cellSize);
-			gridRect = new CRect(firstCellPoint, lastCellPoint);
-		}
+	for (int index = 0; index < gridSize*gridSize; ++index)
+	{
+		crCell = (grid->CellState(index)) ? cellColor : backColor;
+		dcBackBuffer.FillSolidRect(&(m_arrCells.GetAt(index)), crCell);
+		dcBackBuffer.Rectangle(&(m_arrCells.GetAt(index)));
+	}
+
+	pDC->BitBlt(0, 0, clientRect.Width(), clientRect.Height(), &dcBackBuffer, 0, 0, SRCCOPY);
+
+	dcBackBuffer.SelectObject(oldBitBuffer);
+	dcBackBuffer.DeleteDC();
+	bitmapBuffer.DeleteObject();
+	pDC->SelectObject(pBrOld);
+	pDC->RestoreDC(pDCSave);
+	brush.DeleteObject();
 }
 
-void CGOLView::ResizeWindow()
+void CGOLView::ComputeCoords()
 {
-	CRect recClient, recWindow;
-	GetClientRect(&recClient);
-	GetParentFrame()->GetWindowRect(&recWindow);
-	int deltaX = recWindow.Width() - recClient.Width();
-	int deltaY = recWindow.Height() - recClient.Height();
-	recWindow.right = recWindow.left + gridSize*cellSize + deltaX;
-	recWindow.bottom = recWindow.top + gridSize*cellSize + deltaY;
-	GetParentFrame()->MoveWindow(&recWindow);
+	for (int i = 0, x = 0, y = 0; i < gridSize*gridSize; ++i)
+	{
+		x = (i % gridSize) * cellSize + m_gridShift.x;
+		y = (int)(i / gridSize) * cellSize + m_gridShift.y;
+		m_arrCells[i].SetRect(x, y, x + cellSize, y + cellSize);
+	}
 }
 
 void CGOLView::OnRButtonUp(UINT /* nFlags */, CPoint point)
@@ -157,7 +155,6 @@ void CGOLView::OnContextMenu(CWnd* /* pWnd */, CPoint point)
 	theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EDIT, point.x, point.y, this, TRUE);
 #endif
 }
-
 
 // CGOLView diagnostics
 
@@ -179,13 +176,10 @@ CGOLDoc* CGOLView::GetDocument() const // non-debug version is inline
 }
 #endif //_DEBUG
 
-
 // CGOLView message handlers
-
 
 void CGOLView::OnBtstart()
 {
-	// TODO: Add your command handler code here
 	if (m_BtnStartText==stopStr)
 	{
 		KillTimer(timer);
@@ -198,69 +192,59 @@ void CGOLView::OnBtstart()
 	}
 }
 
-
 void CGOLView::OnBtrnd()
 {
-	// TODO: Add your command handler code here
 	grid->RandomGrid();
 	Invalidate();
 }
 
-
 void CGOLView::OnTimer(UINT_PTR nIDEvent)
 {
 	timer = nIDEvent;
-	// TODO: Add your message handler code here and/or call default
 	grid->StepGeneration();
 	Invalidate();
 	CView::OnTimer(nIDEvent);
 }
 
-
 void CGOLView::OnUpdateBtstart(CCmdUI *pCmdUI)
 {
-	// TODO: Add your command update UI handler code here
 	pCmdUI->SetText(m_BtnStartText);
 }
 
-
 BOOL CGOLView::OnEraseBkgnd(CDC* pDC)
 {
-	// TODO: Add your message handler code here and/or call default
-
-	return true;// CView::OnEraseBkgnd(pDC);
+	return true;
+	// CView::OnEraseBkgnd(pDC);
 }
-
 
 void CGOLView::OnBtclr()
 {
-	// TODO: Add your command handler code here
 	KillTimer(timer);
 	m_BtnStartText = startStr;
-
+	grid->~Grid();
 	grid = new Grid(gridSize);
 	Invalidate();
 }
 
-
 void CGOLView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	
 	if (gridRect.PtInRect(point))
 	{
 		KillTimer(timer);
 		m_BtnStartText = startStr;
-		int xmove = (clientRect.Width() - gridRect.Width()) / 2;
-		int ymove = (clientRect.Height() - gridRect.Height()) / 2;
-		CPoint gridPoint = CPoint(point.x - xmove, point.y - ymove);
-
-		int cellX = (int)((gridPoint.x) / cellSize);
-		int cellY = (int)((gridPoint.y) / cellSize);
-		if(grid->CellState(cellX,cellY)) grid->AlterCell(cellX, cellY, 0);
-		else grid->AlterCell(cellX,cellY,1);
+		//The Grid expects zero based column(x) and row(y) indexes
+		// so we transform them from client coords.: apply shift to align with the start of grid
+		// and divide it by the cell size in pixels to get indexes
+		// i = ((y-m_gridShift.y)/cellSize)*gridSize + (x-m_gridShift.x)/cellSize
+		int index = (int)((point.y - m_gridShift.y) / cellSize)*gridSize + (int)((point.x - m_gridShift.x) / cellSize);
+		if(grid->CellState(index)) grid->AlterCell(index, 0);
+		else grid->AlterCell(index,1);
 		Invalidate();
 	}
-	// TODO: Add your message handler code here and/or call default
-
 	CView::OnLButtonDown(nFlags, point);
+}
+
+void CGOLView::OnMouseMove(UINT nFlags, CPoint point)
+{
+	CView::OnMouseMove(nFlags, point);
 }

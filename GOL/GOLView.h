@@ -14,6 +14,10 @@
 
 #pragma once
 #include "Grid.h"
+#include "atltypes.h"
+#include "afxtempl.h"
+
+typedef CArray<CRect, CRect&> CRectArray;
 
 class CGOLView : public CView
 {
@@ -76,7 +80,7 @@ private:
 
 	bool draw;
 
-	CRect cellRect;
+	//CRect cellRect;
 	CRect gridRect;
 	CRect clientRect;
 
@@ -85,6 +89,14 @@ private:
 	COLORREF backColor;
 
 	Grid* grid;
+public:
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+private:
+	CPoint m_gridShift;
+	void ComputeCoords();
+	CRectArray m_arrCells;
+public:
+
 };
 
 #ifndef _DEBUG  // debug version in GOLView.cpp

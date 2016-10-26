@@ -14,6 +14,11 @@ Grid::Grid(int dim):gridDim(dim),generation(1)
 
 Grid::~Grid()
 {
+	currGen.clear();
+	nextGen.clear();
+	currGen.~vector();
+	nextGen.~vector();
+	
 }
 
 void Grid::CountNeighbours()
