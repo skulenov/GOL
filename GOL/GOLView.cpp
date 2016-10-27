@@ -44,6 +44,7 @@ BEGIN_MESSAGE_MAP(CGOLView, CView)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_MOUSEMOVE()
 	ON_WM_CREATE()
+	ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
 
 // CGOLView construction/destruction
@@ -52,7 +53,8 @@ CGOLView::CGOLView() : gridSize(50),
 						cellSize(10),
 						lineSize(1),
 						speed(200),
-						timer(0)
+						timer(0),
+						m_lastIndex(-42)
 {
 	grid = new Grid(gridSize);
 	cellColor = RGB(63, 255, 31);
@@ -106,8 +108,7 @@ void CGOLView::OnDraw(CDC* pDC)
 		
 	CPoint oldShift = m_gridShift;
 	m_gridShift = CPoint((clientRect.Width() - gridSize*cellSize) / 2, (clientRect.Height() - gridSize*cellSize) / 2);
-
-	ComputeCoords();
+	if(oldShift!=m_gridShift)	ComputeCoords();
 
 	CBrush brush;
 	brush.CreateStockObject(HOLLOW_BRUSH);
@@ -230,6 +231,7 @@ void CGOLView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if (gridRect.PtInRect(point))
 	{
+		SetCapture();
 		KillTimer(timer);
 		m_BtnStartText = startStr;
 		//The Grid expects zero based column(x) and row(y) indexes
@@ -246,5 +248,22 @@ void CGOLView::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CGOLView::OnMouseMove(UINT nFlags, CPoint point)
 {
+	if (((nFlags&MK_LBUTTON) == MK_LBUTTON) && gridRect.PtInRect(point))
+	{
+		int index = (int)((point.y - m_gridShift.y) / cellSize)*gridSize + (int)((point.x - m_gridShift.x) / cellSize);
+		if ((m_lastIndex != index) && !(grid->CellState(index)))
+		{
+			grid->AlterCell(index, 1);
+			m_lastIndex = index;
+			Invalidate();
+		}
+	}
+
 	CView::OnMouseMove(nFlags, point);
+}
+
+void CGOLView::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	ReleaseCapture();
+	CView::OnLButtonUp(nFlags, point);
 }

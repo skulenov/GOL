@@ -97,6 +97,9 @@ private:
 	CRectArray m_arrCells;
 public:
 
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+private:
+	int m_lastIndex;
 };
 
 #ifndef _DEBUG  // debug version in GOLView.cpp
