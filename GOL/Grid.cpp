@@ -6,19 +6,24 @@
 using namespace std;
 
 // Constructor
-Grid::Grid(int dim):gridDim(dim),generation(1)
+Grid::Grid(int dim) : gridDim(dim), generation(1)
 {
-	currGen.assign(gridDim*gridDim,0);
-	nextGen.assign(gridDim*gridDim,0);
+	currGen.assign(gridDim*gridDim, 0);
+	nextGen.assign(gridDim*gridDim, 0);
 }
-
 Grid::~Grid()
 {
-	currGen.clear();
-	nextGen.clear();
-	currGen.~vector();
-	nextGen.~vector();
-	
+}
+void Grid::Resize(int dim)
+{
+	gridDim = dim;
+	currGen.resize(gridDim*gridDim);
+	nextGen.resize(gridDim*gridDim);
+}
+void Grid::Clear()
+{
+	currGen.assign(gridDim*gridDim, 0);
+	nextGen.assign(gridDim*gridDim, 0);
 }
 
 void Grid::CountNeighbours()
@@ -138,7 +143,7 @@ void Grid::SurviveOrDie()
 
 void Grid::NewWave()
 {
-	currGen = vector<int>(nextGen);
+	currGen = nextGen;
 	nextGen.assign(gridDim*gridDim, 0);
 	++generation;
 }

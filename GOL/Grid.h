@@ -13,15 +13,17 @@ private:
 	void NewWave();
 
 public:
+	void Clear();
 	void RandomGrid();
+	void StepGeneration();
+	int GetGeneration();
+	void Resize(int new_Size);
 	bool CellState(int index);
 	bool CellState(int i, int j);
 	void AlterCell(int index, int state);
 	void AlterCell(int i, int j, int state);
-	void StepGeneration();
-	int GetGeneration();
-
 	Grid(int);
+	Grid();
 	~Grid();
 };
 

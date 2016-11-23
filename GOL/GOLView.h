@@ -16,8 +16,7 @@
 #include "Grid.h"
 #include "atltypes.h"
 #include "afxtempl.h"
-
-typedef CArray<CRect, CRect&> CRectArray;
+#include "afxwin.h"
 
 class CGOLView : public CView
 {
@@ -42,7 +41,6 @@ protected:
 
 // Implementation
 public:
-	void ResizeWindow();
 	virtual ~CGOLView();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
@@ -53,53 +51,47 @@ protected:
 
 // Generated message map functions
 protected:
-	afx_msg void OnFilePrintPreview();
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
 public:
+	afx_msg void OnGridSzSlider();
+	afx_msg void OnUpdateGridSzStatic(CCmdUI *pCmdUI);
 	afx_msg void OnBtstart();
 	afx_msg void OnBtrnd();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
-private:
-	CString m_BtnStartText;
-	CString startStr;
-	CString stopStr;
-public:
 	afx_msg void OnUpdateBtstart(CCmdUI *pCmdUI);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnBtclr();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnSpeedSlider();
+	afx_msg void OnUpdateSpeedIndStatic(CCmdUI *pCmdUI);
 private:
+	CString m_BtnStartText;
+	CString startStr;
+	CString stopStr;
 	bool isRunning;
 	UINT_PTR timer;
+	int scrollPosY;
+	int scrollPosX;
 	int gridSize;
 	int lineSize;
 	int cellSize;
 	int speed;
-
 	bool draw;
-
-	//CRect cellRect;
-	CRect gridRect;
 	CRect clientRect;
-
 	COLORREF cellColor;
 	COLORREF lineColor;
 	COLORREF backColor;
-
-	Grid* grid;
-public:
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-private:
-	CPoint m_gridShift;
-	void ComputeCoords();
-	CRectArray m_arrCells;
-public:
-
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-private:
+	Grid grid;
 	int m_lastIndex;
+	CPoint m_gridShift;
+	CScrollBar m_vSBar;
+	CScrollBar m_hSBar;
+	SCROLLINFO h_SInfo;
+	SCROLLINFO v_SInfo;
 };
 
 #ifndef _DEBUG  // debug version in GOLView.cpp
