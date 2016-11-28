@@ -30,9 +30,9 @@
 
 // CGOLView
 
-IMPLEMENT_DYNCREATE(CGOLView, CView)
+IMPLEMENT_DYNCREATE(CGOLView, CScrollView)
 
-BEGIN_MESSAGE_MAP(CGOLView, CView)
+BEGIN_MESSAGE_MAP(CGOLView, CScrollView)
 	ON_WM_CONTEXTMENU()
 	ON_WM_RBUTTONUP()
 	ON_COMMAND(ID_BTSTART, &CGOLView::OnBtstart)
@@ -49,8 +49,10 @@ BEGIN_MESSAGE_MAP(CGOLView, CView)
 	ON_UPDATE_COMMAND_UI(IDC_SPEED_IND_STATIC, &CGOLView::OnUpdateSpeedIndStatic)
 	ON_COMMAND(ID_GRID_SZ_SLIDER, &CGOLView::OnGridSzSlider)
 	ON_UPDATE_COMMAND_UI(IDC_GRID_SZ_STATIC, &CGOLView::OnUpdateGridSzStatic)
-	ON_WM_HSCROLL()
-	ON_WM_VSCROLL()
+	ON_COMMAND(ID_COLR_BTN, &CGOLView::OnColrBtn)
+	ON_COMMAND(ID_CELL_COLR_BTN, &CGOLView::OnCellColrBtn)
+	ON_COMMAND(ID_CELL_SZ_SLIDER, &CGOLView::OnCellSzSlider)
+	ON_UPDATE_COMMAND_UI(IDC_CELL_SZ_STATIC, &CGOLView::OnUpdateCellSzStatic)
 END_MESSAGE_MAP()
 
 // CGOLView construction
@@ -81,11 +83,24 @@ BOOL CGOLView::PreCreateWindow(CREATESTRUCT& cs)
 	// TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
 
-	return CView::PreCreateWindow(cs);
+	return CScrollView::PreCreateWindow(cs);
+}
+
+void CGOLView::OnInitialUpdate()
+{
+	CScrollView::OnInitialUpdate();
+	CMFCRibbonBar* pRibbon = ((CFrameWndEx*)AfxGetMainWnd())->GetRibbonBar();
+	ASSERT_VALID(pRibbon);
+	CMFCRibbonSlider* pSlider = DYNAMIC_DOWNCAST(CMFCRibbonSlider, pRibbon->FindByID(ID_CELL_SZ_SLIDER));
+	pSlider->SetPos(5, true);
+	OnCellSzSlider();
+	pSlider = DYNAMIC_DOWNCAST(CMFCRibbonSlider, pRibbon->FindByID(ID_GRID_SZ_SLIDER));
+	pSlider->SetPos(20, true);
+	OnGridSzSlider();
+	SetScrollSizes(MM_TEXT, CSize(grid.Size() * cellSize, grid.Size() * cellSize));
 }
 
 // CGOLView drawing
-
 void CGOLView::OnDraw(CDC* pDC)
 {
 	CGOLDoc* pDoc = GetDocument();
@@ -93,36 +108,40 @@ void CGOLView::OnDraw(CDC* pDC)
 	if (!pDoc)
 		return;
 	
+	SetScrollSizes(MM_TEXT, CSize(grid.Size() * cellSize, grid.Size() * cellSize));
+	scrollPosX = GetScrollPosition().x;
+	scrollPosY = GetScrollPosition().y;
+		
 	GetClientRect(&clientRect);
 
-	m_gridShift = CPoint((clientRect.Width() - gridSize*cellSize) / 2, (clientRect.Height() - gridSize*cellSize) / 2);
-
-	CBitmap bitmapBuffer;
-	bitmapBuffer.CreateCompatibleBitmap(pDC, clientRect.Width(), clientRect.Height());
-	//bitmapBuffer.CreateCompatibleBitmap(pDC, gridSize*cellSize, gridSize*cellSize);
+	CRect rCell,vRect;
+	vRect.SetRect(clientRect.TopLeft(), clientRect.BottomRight() + CPoint(scrollPosX, scrollPosY));
+	
+	CBitmap gridBitmap;
+	gridBitmap.CreateCompatibleBitmap(pDC, vRect.Width(), vRect.Height());
+	
 	CDC dcBackBuffer;
 	dcBackBuffer.CreateCompatibleDC(pDC);
-	dcBackBuffer.SelectObject(bitmapBuffer);
-
-//	m_gridShift = CPoint((clientRect.Width() - gridSize*cellSize) / 2, (clientRect.Height() - gridSize*cellSize) / 2);
+	dcBackBuffer.SelectObject(&gridBitmap);
 	
 	CBrush brush;
 	brush.CreateStockObject(HOLLOW_BRUSH);
 	dcBackBuffer.SelectObject(&brush);
-	COLORREF crCell;
-	CRect rCell;
+	
+	m_gridShift.x = (clientRect.Width() <= grid.Size()*cellSize) ? 0 : (clientRect.Width() - grid.Size()*cellSize) / 2;
+	m_gridShift.y = (clientRect.Height() <= grid.Size()*cellSize) ? 0 : (clientRect.Height() - grid.Size()*cellSize) / 2;
 
-	for (int index = 0; index < gridSize*gridSize; ++index)
+	for (int index = 0; index < grid.Length(); ++index)
 	{
-		crCell = (grid.CellState(index)) ? cellColor : backColor;
-		int x = (index % gridSize) * cellSize +m_gridShift.x;
-		int y = (int)(index / gridSize) * cellSize +m_gridShift.y;
+		int x = (index % grid.Size()) * cellSize;
+		int y = (int)(index / grid.Size()) * cellSize;
+
 		rCell.SetRect(x, y, x + cellSize, y + cellSize);
-		dcBackBuffer.FillSolidRect(rCell, crCell);
+		rCell.OffsetRect(m_gridShift.x, m_gridShift.y);
+		dcBackBuffer.FillSolidRect(rCell, (grid.CellState(index)) ? cellColor : backColor);
 		dcBackBuffer.Rectangle(rCell);
 	}
-
-	pDC->BitBlt(0, 0, clientRect.Width(), clientRect.Height(), &dcBackBuffer, 0, 0, SRCCOPY);
+	pDC->BitBlt(0, 0, vRect.right, vRect.bottom, &dcBackBuffer, 0, 0, SRCCOPY);
 }
 
 void CGOLView::OnRButtonUp(UINT /* nFlags */, CPoint point)
@@ -143,12 +162,12 @@ void CGOLView::OnContextMenu(CWnd* /* pWnd */, CPoint point)
 #ifdef _DEBUG
 void CGOLView::AssertValid() const
 {
-	CView::AssertValid();
+	CScrollView::AssertValid();
 }
 
 void CGOLView::Dump(CDumpContext& dc) const
 {
-	CView::Dump(dc);
+	CScrollView::Dump(dc);
 }
 
 CGOLDoc* CGOLView::GetDocument() const // non-debug version is inline
@@ -182,7 +201,7 @@ void CGOLView::OnTimer(UINT_PTR nIDEvent)
 	timer = nIDEvent;
 	grid.StepGeneration();
 	Invalidate();
-	CView::OnTimer(nIDEvent);
+	CScrollView::OnTimer(nIDEvent);
 }
 
 void CGOLView::OnUpdateBtstart(CCmdUI *pCmdUI)
@@ -193,7 +212,7 @@ void CGOLView::OnUpdateBtstart(CCmdUI *pCmdUI)
 BOOL CGOLView::OnEraseBkgnd(CDC* pDC)
 {
 	return true;
-	//CView::OnEraseBkgnd(pDC);
+	//CScrollView::OnEraseBkgnd(pDC);
 }
 
 void CGOLView::OnBtclr()
@@ -206,40 +225,55 @@ void CGOLView::OnBtclr()
 
 void CGOLView::OnLButtonDown(UINT nFlags, CPoint point)
 {
+	CPoint pos = point;
+	CDC * dc=this->GetDC();
+	OnPrepareDC(dc);
+	dc->DPtoLP(&pos);
+	CSize size = GetTotalSize();
 	CRect rGrid;
-	rGrid.SetRect(m_gridShift, m_gridShift + CPoint(gridSize*cellSize, gridSize*cellSize));
-	if (rGrid.PtInRect(point))
+	rGrid.SetRect(m_gridShift, m_gridShift+CPoint(size));
+	
+	if (rGrid.PtInRect(pos))
 	{
 		SetCapture();
-		int index = (int)((point.y - m_gridShift.y) / cellSize)*gridSize + (int)((point.x - m_gridShift.x) / cellSize);
+		int index = (int)((pos.y - m_gridShift.y) / cellSize)*grid.Size() + (int)((pos.x - m_gridShift.x) / cellSize);
 		if(grid.CellState(index)) grid.AlterCell(index, 0);
 		else grid.AlterCell(index,1);
 		Invalidate();
 	}
-	CView::OnLButtonDown(nFlags, point);
+	CScrollView::OnLButtonDown(nFlags, point);
 }
 
 void CGOLView::OnMouseMove(UINT nFlags, CPoint point)
 {
-	CRect rGrid;
-	rGrid.SetRect(m_gridShift, m_gridShift + CPoint(gridSize*cellSize, gridSize*cellSize));
-	if (((nFlags&MK_LBUTTON) == MK_LBUTTON) && rGrid.PtInRect(point))
+	if (((nFlags&MK_LBUTTON) == MK_LBUTTON))
 	{
-		int index = (int)((point.y - m_gridShift.y) / cellSize)*gridSize + (int)((point.x - m_gridShift.x) / cellSize);
-		if ((m_lastIndex != index) && !(grid.CellState(index)))
+		CPoint pos = point;
+		CDC * dc = this->GetDC();
+		OnPrepareDC(dc);
+		dc->DPtoLP(&pos);
+		CSize size = GetTotalSize();
+		CRect rGrid;
+		rGrid.SetRect(m_gridShift, m_gridShift + CPoint(size));
+
+		if (rGrid.PtInRect(pos))
 		{
-			grid.AlterCell(index, 1);
-			m_lastIndex = index;
-			Invalidate();
+			int index = (int)((pos.y - m_gridShift.y) / cellSize)*grid.Size() + (int)((pos.x - m_gridShift.x) / cellSize);
+			if ((m_lastIndex != index) && !(grid.CellState(index)))
+			{
+				grid.AlterCell(index, 1);
+				m_lastIndex = index;
+				Invalidate();
+			}
 		}
 	}
-	CView::OnMouseMove(nFlags, point);
+	CScrollView::OnMouseMove(nFlags, point);
 }
 
 void CGOLView::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	ReleaseCapture();
-	CView::OnLButtonUp(nFlags, point);
+	CScrollView::OnLButtonUp(nFlags, point);
 }
 
 void CGOLView::OnSpeedSlider()
@@ -260,7 +294,6 @@ void CGOLView::OnUpdateSpeedIndStatic(CCmdUI *pCmdUI)
 	pCmdUI->SetText(str);
 }
 
-
 void CGOLView::OnGridSzSlider()
 {
 	CMFCRibbonBar* pRibbon = ((CFrameWndEx*)AfxGetMainWnd())->GetRibbonBar();
@@ -272,10 +305,48 @@ void CGOLView::OnGridSzSlider()
 	Invalidate();
 }
 
-
 void CGOLView::OnUpdateGridSzStatic(CCmdUI *pCmdUI)
 {
 	CString str;
-	str.Format(_T("Size (cells): %d"), gridSize);
+	str.Format(_T("Size : %d"), grid.Size());
 	pCmdUI->SetText(str);
 }
+
+void CGOLView::OnCellSzSlider()
+{
+	CMFCRibbonBar* pRibbon = ((CFrameWndEx*)AfxGetMainWnd())->GetRibbonBar();
+	ASSERT_VALID(pRibbon);
+	CMFCRibbonSlider* pSlider = DYNAMIC_DOWNCAST(CMFCRibbonSlider, pRibbon->FindByID(ID_CELL_SZ_SLIDER));
+	int position = pSlider->GetPos();
+	cellSize = position;
+	Invalidate();
+}
+
+void CGOLView::OnUpdateCellSzStatic(CCmdUI *pCmdUI)
+{
+	CString str;
+	str.Format(_T("Size : %d"), cellSize);
+	pCmdUI->SetText(str);
+	Invalidate();
+}
+
+void CGOLView::OnColrBtn()
+{
+	CMFCColorDialog cDlg;
+	if (cDlg.DoModal() == IDOK)
+	{
+		backColor = cDlg.GetColor();
+	}
+	Invalidate();
+}
+
+void CGOLView::OnCellColrBtn()
+{
+	CMFCColorDialog cDlg;
+	if (cDlg.DoModal() == IDOK)
+	{
+		cellColor = cDlg.GetColor();
+	}
+	Invalidate();
+}
+

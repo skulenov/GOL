@@ -18,7 +18,7 @@
 #include "afxtempl.h"
 #include "afxwin.h"
 
-class CGOLView : public CView
+class CGOLView : public CScrollView
 {
 protected: // create from serialization only
 	CGOLView();
@@ -37,6 +37,7 @@ public:
 public:
 	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+	virtual void OnInitialUpdate();
 protected:
 
 // Implementation
@@ -72,7 +73,6 @@ private:
 	CString m_BtnStartText;
 	CString startStr;
 	CString stopStr;
-	bool isRunning;
 	UINT_PTR timer;
 	int scrollPosY;
 	int scrollPosX;
@@ -80,7 +80,6 @@ private:
 	int lineSize;
 	int cellSize;
 	int speed;
-	bool draw;
 	CRect clientRect;
 	COLORREF cellColor;
 	COLORREF lineColor;
@@ -88,10 +87,11 @@ private:
 	Grid grid;
 	int m_lastIndex;
 	CPoint m_gridShift;
-	CScrollBar m_vSBar;
-	CScrollBar m_hSBar;
-	SCROLLINFO h_SInfo;
-	SCROLLINFO v_SInfo;
+public:
+	afx_msg void OnColrBtn();
+	afx_msg void OnCellColrBtn();
+	afx_msg void OnCellSzSlider();
+	afx_msg void OnUpdateCellSzStatic(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in GOLView.cpp

@@ -22,8 +22,9 @@ public:
 	bool CellState(int i, int j);
 	void AlterCell(int index, int state);
 	void AlterCell(int i, int j, int state);
+	int Length();
+	int Size();
 	Grid(int);
-	Grid();
 	~Grid();
 };
 

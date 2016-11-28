@@ -83,9 +83,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\GOL.ico"
-
 IDR_GOLTYPE             ICON                    "res\\GOLDoc.ico"
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -93,21 +91,13 @@ IDR_GOLTYPE             ICON                    "res\\GOLDoc.ico"
 //
 
 IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
-
 IDR_MAINFRAME_256       BITMAP                  "res\\Toolbar256.bmp"
-
 IDB_MAIN                BITMAP                  "res\\main.bmp"
-
 IDB_FILELARGE           BITMAP                  "res\\filelarge.bmp"
-
 IDB_FILESMALL           BITMAP                  "res\\filesmall.bmp"
-
 IDB_WRITELARGE          BITMAP                  "res\\writelarge.bmp"
-
 IDB_WRITESMALL          BITMAP                  "res\\writesmall.bmp"
-
 IDB_BUTTONS             BITMAP                  "res\\buttons.bmp"
-
 
 /////////////////////////////////////////////////////////////////////////////
 //

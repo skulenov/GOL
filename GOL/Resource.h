@@ -52,15 +52,18 @@
 #define ID_CELL_SZ_SLIDER               32781
 #define ID_BUTTON3                      32782
 #define ID_CELL_COLR_BUTTON             32782
+#define ID_COLR_BTN                     32782
 #define IDC_GRID_SZ_STATIC              32783
 #define IDC_CELL_SZ_STATIC              32784
+#define ID_BUTTON4                      32785
+#define ID_CELL_COLR_BTN                32785
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        310
-#define _APS_NEXT_COMMAND_VALUE         32785
+#define _APS_NEXT_COMMAND_VALUE         32786
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

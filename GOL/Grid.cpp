@@ -14,6 +14,16 @@ Grid::Grid(int dim) : gridDim(dim), generation(1)
 Grid::~Grid()
 {
 }
+
+int Grid::Length()
+{
+	return (this->currGen.size());
+}
+int Grid::Size()
+{
+	return (this->gridDim);
+}
+
 void Grid::Resize(int dim)
 {
 	gridDim = dim;
