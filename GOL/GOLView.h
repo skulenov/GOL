@@ -52,8 +52,6 @@ protected:
 
 // Generated message map functions
 protected:
-	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnGridSzSlider();
@@ -64,15 +62,15 @@ public:
 	afx_msg void OnUpdateBtstart(CCmdUI *pCmdUI);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnBtclr();
+	bool IsLogicalPoint(CPoint & point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnSpeedSlider();
+	CMFCRibbonSlider * GetSlider(int nID);
 	afx_msg void OnUpdateSpeedIndStatic(CCmdUI *pCmdUI);
 private:
-	CString m_BtnStartText;
-	CString startStr;
-	CString stopStr;
+	CString m_BtnStartText, startStr, stopStr;
 	UINT_PTR timer;
 	int scrollPosY;
 	int scrollPosX;
@@ -90,8 +88,10 @@ private:
 public:
 	afx_msg void OnColrBtn();
 	afx_msg void OnCellColrBtn();
+	void GetColorDlg(COLORREF & colorTarget);
 	afx_msg void OnCellSzSlider();
 	afx_msg void OnUpdateCellSzStatic(CCmdUI *pCmdUI);
+	void UpdateStatic(CCmdUI * pCmdUI, int nID, int value);
 };
 
 #ifndef _DEBUG  // debug version in GOLView.cpp

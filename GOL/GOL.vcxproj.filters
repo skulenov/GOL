@@ -90,13 +90,16 @@
     <Image Include="res\GOLDoc.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\GOL.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="res\Toolbar.bmp">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\Toolbar256.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\..\..\Pictures\GOL.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\..\..\Pictures\GOL_small.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

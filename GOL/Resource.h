@@ -7,6 +7,8 @@
 #define IDS_BTNSTART                    101
 #define IDS_STRING102                   102
 #define IDS_BTNSTOP                     102
+#define IDS_SIZESTR                     103
+#define IDS_SPEEDSTR                    104
 #define IDB_WRITESMALL                  110
 #define IDB_WRITELARGE                  111
 #define IDB_MAIN                        112
@@ -38,6 +40,12 @@
 #define ID_VIEW_APPLOOK_WINDOWS_7       219
 #define IDS_EDIT_MENU                   306
 #define IDR_RIBBON                      307
+#define IDB_BITMAP1                     314
+#define IDB_BITMAP2                     315
+#define IDB_BITMAP3                     319
+#define IDC_MFCLINK1                    1000
+#define IDC_MFCLINK2                    1001
+#define IDC_PICBOX1                     1003
 #define ID_WRITE_PASTEASHYPERLINK       32770
 #define ID_BTSTART                      32771
 #define ID_BTRND                        32772
@@ -62,9 +70,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        310
+#define _APS_NEXT_RESOURCE_VALUE        320
 #define _APS_NEXT_COMMAND_VALUE         32786
-#define _APS_NEXT_CONTROL_VALUE         1000
+#define _APS_NEXT_CONTROL_VALUE         1004
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

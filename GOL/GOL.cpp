@@ -30,9 +30,6 @@
 
 BEGIN_MESSAGE_MAP(CGOLApp, CWinAppEx)
 	ON_COMMAND(ID_APP_ABOUT, &CGOLApp::OnAppAbout)
-	// Standard file based document commands
-	ON_COMMAND(ID_FILE_NEW, &CWinAppEx::OnFileNew)
-	ON_COMMAND(ID_FILE_OPEN, &CWinAppEx::OnFileOpen)
 END_MESSAGE_MAP()
 
 
@@ -79,19 +76,8 @@ BOOL CGOLApp::InitInstance()
 	// Change the registry key under which our settings are stored
 	// TODO: You should modify this string to be something appropriate
 	// such as the name of your company or organization
-	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
+	SetRegistryKey(_T("Sead Kulenoviæ-Game Of Life"));
 	LoadStdProfileSettings(4);  // Load standard INI file options (including MRU)
-
-
-	InitContextMenuManager();
-
-	InitKeyboardManager();
-
-	InitTooltipManager();
-	CMFCToolTipInfo ttParams;
-	ttParams.m_bVislManagerTheme = TRUE;
-	theApp.GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL,
-		RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
 
 	// Register the application's document templates.  Document templates
 	//  serve as the connection between documents, frame windows and views
@@ -120,6 +106,7 @@ BOOL CGOLApp::InitInstance()
 	// The one and only window has been initialized, so show and update it
 	m_pMainWnd->ShowWindow(SW_SHOW);
 	m_pMainWnd->UpdateWindow();
+
 	return TRUE;
 }
 
@@ -177,11 +164,11 @@ void CGOLApp::OnAppAbout()
 
 void CGOLApp::PreLoadState()
 {
-	BOOL bNameValid;
-	CString strName;
-	bNameValid = strName.LoadString(IDS_EDIT_MENU);
-	ASSERT(bNameValid);
-	GetContextMenuManager()->AddMenu(strName, IDR_POPUP_EDIT);
+	//BOOL bNameValid;
+	//CString strName;
+	//bNameValid = strName.LoadString(IDS_EDIT_MENU);
+	//ASSERT(bNameValid);
+	//GetContextMenuManager()->AddMenu(strName, IDR_POPUP_EDIT);
 }
 
 void CGOLApp::LoadCustomState()

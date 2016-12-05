@@ -17,7 +17,7 @@ Grid::~Grid()
 
 int Grid::Length()
 {
-	return (this->currGen.size());
+	return (int)(this->currGen.size());
 }
 int Grid::Size()
 {

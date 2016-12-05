@@ -37,6 +37,7 @@ CMainFrame::CMainFrame()
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2008);
+
 }
 
 CMainFrame::~CMainFrame()
@@ -48,10 +49,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CFrameWndEx::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	BOOL bNameValid;
-
 	m_wndRibbonBar.Create(this);
 	m_wndRibbonBar.LoadFromResource(IDR_RIBBON);
+	m_MainButton.SetVisible(FALSE);
+	m_MainButton.DestroyCtrl();
+	m_wndRibbonBar.SetApplicationButton(&m_MainButton, CSize());
+	m_wndRibbonBar.GetQuickAccessToolbar()->RemoveAll();
 
 	// enable Visual Studio 2005 style docking window behavior
 	CDockingManager::SetDockingMode(DT_SMART);
@@ -162,7 +165,7 @@ void CMainFrame::OnApplicationLook(UINT id)
 		CDockingManager::SetDockingMode(DT_SMART);
 		m_wndRibbonBar.SetWindows7Look(FALSE);
 	}
-
+	
 	RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME | RDW_ERASE);
 
 	theApp.WriteInt(_T("ApplicationLook"), theApp.m_nAppLook);
