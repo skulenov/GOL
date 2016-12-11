@@ -211,6 +211,10 @@
     <ResourceCompile Include="GOL.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\Pictures\VS_RES\backup\GOL.bmp" />
+    <Image Include="..\..\..\..\Pictures\VS_RES\backup\GOL.ico" />
+    <Image Include="..\..\..\..\Pictures\VS_RES\backup\GOL_312x312.ico" />
+    <Image Include="..\..\..\..\Pictures\VS_RES\backup\GOL_small.bmp" />
     <Image Include="res\buttons.bmp" />
     <Image Include="res\filelarge.bmp" />
     <Image Include="res\filesmall.bmp" />
