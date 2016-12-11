@@ -98,8 +98,8 @@ IDB_FILESMALL           BITMAP                  "res\\filesmall.bmp"
 IDB_WRITELARGE          BITMAP                  "res\\writelarge.bmp"
 IDB_WRITESMALL          BITMAP                  "res\\writesmall.bmp"
 IDB_BUTTONS             BITMAP                  "res\\buttons.bmp"
-IDB_GOLBMP1             BITMAP                  "C:\\Users\\skule\\Documents\\GitHubVisualStudio\\GOL\\GOL\\res\\GOL.bmp"
-IDB_GOLBMP_SMALL        BITMAP                  "C:\\Users\\skule\\Documents\\GitHubVisualStudio\\GOL\\GOL\\res\\GOL_small.bmp"
+IDB_GOLBMP1             BITMAP                  "res\\GOL.bmp"
+IDB_GOLBMP_SMALL        BITMAP                  "res\\GOL_small.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
