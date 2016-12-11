@@ -41,7 +41,9 @@
 #define IDS_EDIT_MENU                   306
 #define IDR_RIBBON                      307
 #define IDB_BITMAP1                     314
+#define IDB_GOLBMP1                     314
 #define IDB_BITMAP2                     315
+#define IDB_GOLBMP_SMALL                315
 #define IDB_BITMAP3                     319
 #define IDC_MFCLINK1                    1000
 #define IDC_MFCLINK2                    1001

@@ -211,12 +211,13 @@
     <ResourceCompile Include="GOL.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\Pictures\GOL.bmp" />
-    <Image Include="..\..\..\..\Pictures\GOL_small.bmp" />
     <Image Include="res\buttons.bmp" />
     <Image Include="res\filelarge.bmp" />
     <Image Include="res\filesmall.bmp" />
+    <Image Include="res\GOL.bmp" />
     <Image Include="res\GOLDoc.ico" />
+    <Image Include="res\GOL_312x312.ico" />
+    <Image Include="res\GOL_small.bmp" />
     <Image Include="res\main.bmp" />
     <Image Include="res\Toolbar.bmp" />
     <Image Include="res\Toolbar256.bmp" />
