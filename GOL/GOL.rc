@@ -82,7 +82,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAINFRAME           ICON                    "res\\GOL_312x312.ico"
+IDR_MAINFRAME           ICON                    "res\\GOL.ico"
 IDR_GOLTYPE             ICON                    "res\\GOLDoc.ico"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -307,7 +307,6 @@ GUIDELINES DESIGNINFO
 BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
-        MOCKUP, 0, 35, 0, 0, "..\..\..\..\Pictures\GOL.bmp"
         LEFTMARGIN, 7
         RIGHTMARGIN, 198
         TOPMARGIN, 7
