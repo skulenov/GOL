@@ -67,7 +67,7 @@ CGOLView::CGOLView() :
 	grid(Grid(gridSize))
 {
 	cellColor = RGB(63, 255, 31);
-	lineColor = RGB(200, 200, 200);
+	lineColor = RGB(0, 0, 0);
 	backColor = RGB(100, 100, 100);
 	startStr.LoadStringW(IDS_BTNSTART);
 	stopStr.LoadStringW(IDS_BTNSTOP);
@@ -132,7 +132,12 @@ void CGOLView::OnDraw(CDC* pDC)
 	CBrush brush;
 	brush.CreateStockObject(HOLLOW_BRUSH);
 	dcBackBuffer.SelectObject(&brush);
-	
+
+	CPen pen;
+	if (cellSize == 2 || cellSize == 3) pen.CreatePen(PS_DOT, 1,lineColor);
+	else pen.CreatePen(PS_SOLID, 1, lineColor);
+	dcBackBuffer.SelectObject(&pen);
+
 	m_gridShift.x = (clientRect.Width() <= grid.Size()*cellSize) ? 0 : (clientRect.Width() - grid.Size()*cellSize) / 2;
 	m_gridShift.y = (clientRect.Height() <= grid.Size()*cellSize) ? 0 : (clientRect.Height() - grid.Size()*cellSize) / 2;
 
@@ -145,6 +150,7 @@ void CGOLView::OnDraw(CDC* pDC)
 		rCell.OffsetRect(m_gridShift.x, m_gridShift.y);
 		dcBackBuffer.FillSolidRect(rCell, (grid.CellState(index)) ? cellColor : backColor);
 		dcBackBuffer.Rectangle(rCell);
+
 	}
 	pDC->BitBlt(0, 0, vRect.right, vRect.bottom, &dcBackBuffer, 0, 0, SRCCOPY);
 	SetDynTitle();
@@ -299,6 +305,8 @@ void CGOLView::OnUpdateCellSzStatic(CCmdUI *pCmdUI)
 
 void CGOLView::OnColrBtn()
 {
+	CMFCRibbonColorButton* pColorBtn = DYNAMIC_DOWNCAST(CMFCRibbonColorButton , (((CFrameWndEx*)AfxGetMainWnd())->GetRibbonBar())->FindByID(ID_COLR_BTN));
+	lineColor = pColorBtn->GetColor();
 	GetColorDlg(backColor);
 }
 
