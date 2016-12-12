@@ -382,11 +382,12 @@ BEGIN
     IDS_BTNSTOP             "Stop"
     IDS_SIZESTR             "Size : %d"
     IDS_SPEEDSTR            "Speed (ms): %d"
+    IDS_TITLE_COUNT         " - Generation : %d"
 END
 
 STRINGTABLE
 BEGIN
-    IDR_MAINFRAME           "GOL\n\nGOL\n\n\nGOL.Document\nGOL.Document"
+    IDR_MAINFRAME           "\nGOL"
 END
 
 STRINGTABLE

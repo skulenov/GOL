@@ -96,12 +96,6 @@
     <Image Include="res\Toolbar256.bmp">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\..\..\..\Pictures\VS_RES\backup\GOL.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\..\..\..\Pictures\VS_RES\backup\GOL_312x312.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="res\GOL.bmp">
       <Filter>Resource Files</Filter>
     </Image>

@@ -34,6 +34,7 @@ void Grid::Clear()
 {
 	currGen.assign(gridDim*gridDim, 0);
 	nextGen.assign(gridDim*gridDim, 0);
+	generation = 1;
 }
 
 void Grid::CountNeighbours()
@@ -187,6 +188,7 @@ void Grid::RandomGrid()
 {
 	srand((int)time(0));									// Use current time as seed for random number generator
 	generate(currGen.begin(), currGen.end(), []() {return (rand() % 2); });
+	generation = 1;
 }
 
 int Grid::GetGeneration()

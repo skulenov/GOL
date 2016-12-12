@@ -51,8 +51,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndRibbonBar.Create(this);
 	m_wndRibbonBar.LoadFromResource(IDR_RIBBON);
-	m_MainButton.SetVisible(FALSE);
-	m_wndRibbonBar.SetApplicationButton(&m_MainButton, CSize());
 	m_wndRibbonBar.GetQuickAccessToolbar()->RemoveAll();
 
 	// enable Visual Studio 2005 style docking window behavior
@@ -71,7 +69,10 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 		return FALSE;
 	// TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
-
+	cs.style &= ~FWS_ADDTOTITLE;
+	m_MainButton.SetVisible(FALSE);
+	m_wndRibbonBar.SetApplicationButton(&m_MainButton, CSize(0));
+	
 	return TRUE;
 }
 

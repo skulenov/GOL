@@ -97,6 +97,18 @@ void CGOLView::OnInitialUpdate()
 	OnGridSzSlider();
 
 	SetScrollSizes(MM_TEXT, CSize(grid.Size() * cellSize, grid.Size() * cellSize));
+
+	SetDynTitle();
+}
+
+void CGOLView::SetDynTitle()
+{
+	CWnd * pMainFrameWnd = AfxGetMainWnd();
+	CString appName, genFormat, genCount;
+	appName.LoadString(AFX_IDS_APP_TITLE);
+	genFormat.LoadString(IDS_TITLE_COUNT);
+	genCount.Format(genFormat, grid.GetGeneration());
+	pMainFrameWnd->SetWindowText(appName + genCount);
 }
 
 // CGOLView drawing
@@ -135,7 +147,9 @@ void CGOLView::OnDraw(CDC* pDC)
 		dcBackBuffer.Rectangle(rCell);
 	}
 	pDC->BitBlt(0, 0, vRect.right, vRect.bottom, &dcBackBuffer, 0, 0, SRCCOPY);
+	SetDynTitle();
 }
+
 
 // CGOLView diagnostics
 

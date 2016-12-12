@@ -9,6 +9,7 @@
 #define IDS_BTNSTOP                     102
 #define IDS_SIZESTR                     103
 #define IDS_SPEEDSTR                    104
+#define IDS_TITLE_COUNT                 105
 #define IDB_WRITESMALL                  110
 #define IDB_WRITELARGE                  111
 #define IDB_MAIN                        112
